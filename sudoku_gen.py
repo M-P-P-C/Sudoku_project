@@ -74,16 +74,22 @@ def sudoku_init(numbers, size_square = 3):
 
     sudoku = np.zeros([size_square*size_square, size_square*size_square], dtype=int) #initialize array of full sudoku
 
-    small_squares = np.zeros((2, size_square, size_square))
+    small_squares = np.zeros((3, size_square, size_square))
 
-    for i in range(2):
+    for i in range(3):
         small_squares[i,:,:] = random_square(numbers, size_square) #3D array containing prefilled squares
 
-    pos= {'A': slice(0,3), 'B': slice(3,6), 'C': slice(6,9)} #possible positions of squares in sudoku
+    #pos= {'A': slice(0,3), 'B': slice(3,6), 'C': slice(6,9)} #possible positions of squares in sudoku
+    pos = {}
+    for i in range(size_square):
+        pos[i+1] = slice(i*3,(i+1)*3)
+
 
     #the following section fills out the sudoku array with the generated squares
-    sudoku[pos['A'], pos['A']] = small_squares[0,:,:]
-    sudoku[pos['B'], pos['B']] = small_squares[1,:,:]
+    sudoku[pos[1], pos[1]] = small_squares[0,:,:]
+    sudoku[pos[2], pos[2]] = small_squares[1,:,:]
+    sudoku[pos[3], pos[3]] = small_squares[2,:,:]
+
 
     return sudoku
 
@@ -92,13 +98,13 @@ def sudoku_fill(sudoku_temp, numbers):
 
     new_square = random_square(numbers)
 
-    if sudoku[0,3] == 0:
+    if sudoku_temp[0,3] == 0:
         sudoku_temp[0:3,3:6] = new_square
-    elif sudoku[3,0] == 0:
+    elif sudoku_temp[3,0] == 0:
         sudoku_temp[3:6,0:3] = new_square
-    elif sudoku[3,6] == 0:
+    elif sudoku_temp[3,6] == 0:
         sudoku_temp[3:6,6:9] = new_square
-    elif sudoku[6,3] == 0:
+    elif sudoku_temp[6,3] == 0:
         sudoku_temp[6:9,3:6] = new_square
 
 

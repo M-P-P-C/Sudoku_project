@@ -2,7 +2,7 @@
 
 import numpy as np 
 from numpy.random import default_rng #used to generate random square without repetition
-import sudoku_checker 
+import sudoku_checker as sudokucheck
 
 numbers = [1,2,3,4,5,6,7,8,9] #possible numbers in a 3x3 square
 
@@ -17,48 +17,47 @@ def main():
 
     #sudoku = num_filler(sudoku)
 
-    sudoku_temp = sudoku_fill(sudoku.copy(), numbers)
-    sudoku_checker.full_sudoku_check()
-    sudoku_checker.full_sudoku_check(sudoku.copy())
+    line = False
+    column = False
 
-    wrong_r = 1
-    wrong_c = 1
-
-    while wrong_r == 1 or wrong_c==1:
-        wrong_r, wrong_c = sudoku_checker(sudoku_temp)
-
-    sudoku = sudoku_temp.copy()
-
-    wrong_r = 1
-    wrong_c = 1
-
-    while wrong_r == 1 or wrong_c==1:
+    while line == False or column == False:
         sudoku_temp = sudoku_fill(sudoku.copy(), numbers)
-        wrong_r, wrong_c = sudoku_checker(sudoku_temp)
-
-    wrong_r = 1
-    wrong_c = 1
+        line, column = sudokucheck.full_sudoku_check(sudoku_temp)
 
     sudoku = sudoku_temp.copy()
 
     print(sudoku)
 
-    while wrong_r == 1 or wrong_c==1:
-        sudoku_temp = sudoku_fill(sudoku.copy(), numbers)
-        wrong_r, wrong_c = sudoku_checker(sudoku_temp)
+    line = False
+    column = False
 
-    wrong_r = 1
-    wrong_c = 1
+    while line == False or column == False:
+        sudoku_temp = sudoku_fill(sudoku.copy(), numbers)
+        line, column = sudokucheck.full_sudoku_check(sudoku_temp)
 
     sudoku = sudoku_temp.copy()
 
+    print(sudoku)
 
-    while wrong_r == 1 or wrong_c==1:
+    line = False
+    column = False
+
+    while line == False or column == False:
         sudoku_temp = sudoku_fill(sudoku.copy(), numbers)
-        wrong_r, wrong_c = sudoku_checker(sudoku_temp)
+        line, column = sudokucheck.full_sudoku_check(sudoku_temp)
 
     sudoku = sudoku_temp.copy()
 
+    print(sudoku)
+
+    line = False
+    column = False
+
+    while line == False or column == False:
+        sudoku_temp = sudoku_fill(sudoku.copy(), numbers)
+        line, column = sudokucheck.full_sudoku_check(sudoku_temp)
+
+    sudoku = sudoku_temp.copy()
 
     print(sudoku)
 

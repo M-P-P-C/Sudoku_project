@@ -34,6 +34,8 @@ def full_sudoku_check(sudoku):
     print(outcome_columns)
     outcome_squares = sudoku_square_checker(sudoku)
     print(outcome_squares)
+
+    return outcome_lines, outcome_columns
 #checkers functions
 
 #checker 1: lines

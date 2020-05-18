@@ -1,6 +1,8 @@
+#!/usr/bin/env python3
+
 import numpy as np 
 from numpy.random import default_rng #used to generate random square without repetition
-
+import sudoku_checker 
 
 numbers = [1,2,3,4,5,6,7,8,9] #possible numbers in a 3x3 square
 
@@ -15,11 +17,14 @@ def main():
 
     #sudoku = num_filler(sudoku)
 
+    sudoku_temp = sudoku_fill(sudoku.copy(), numbers)
+    sudoku_checker.full_sudoku_check()
+    sudoku_checker.full_sudoku_check(sudoku.copy())
+
     wrong_r = 1
     wrong_c = 1
 
     while wrong_r == 1 or wrong_c==1:
-        sudoku_temp = sudoku_fill(sudoku.copy(), numbers)
         wrong_r, wrong_c = sudoku_checker(sudoku_temp)
 
     sudoku = sudoku_temp.copy()
@@ -56,7 +61,6 @@ def main():
 
 
     print(sudoku)
-
 
 
 def random_square(numbers, size_square = 3): 
@@ -90,6 +94,9 @@ def sudoku_init(numbers, size_square = 3):
     sudoku[pos[2], pos[2]] = small_squares[1,:,:]
     sudoku[pos[3], pos[3]] = small_squares[2,:,:]
 
+    #from matplotlib import pyplot as plt
+    #plt.imshow(sudoku, interpolation='nearest')
+    #plt.show()
 
     return sudoku
 

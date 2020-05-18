@@ -4,35 +4,91 @@ from numpy.random import default_rng #used to generate random square without rep
 
 numbers = [1,2,3,4,5,6,7,8,9] #possible numbers in a 3x3 square
 
-rng = default_rng()
+size_square = 3
 
-def random_square(numbers): #this function generates a random 3 by 3 square without repetition
+rng = default_rng() #setup random number generator
 
-    ttsquare = np.zeros([3,3], dtype = int)
 
-    ttsquare = rng.choice(numbers,  size=(3, 3),replace=False) 
+def main():
+
+    sudoku = sudoku_init(numbers)
+
+    #sudoku = num_filler(sudoku)
+
+    wrong_r = 1
+    wrong_c = 1
+
+    while wrong_r == 1 or wrong_c==1:
+        sudoku_temp = sudoku_fill(sudoku.copy(), numbers)
+        wrong_r, wrong_c = sudoku_checker(sudoku_temp)
+
+    sudoku = sudoku_temp.copy()
+
+    wrong_r = 1
+    wrong_c = 1
+
+    while wrong_r == 1 or wrong_c==1:
+        sudoku_temp = sudoku_fill(sudoku.copy(), numbers)
+        wrong_r, wrong_c = sudoku_checker(sudoku_temp)
+
+    wrong_r = 1
+    wrong_c = 1
+
+    sudoku = sudoku_temp.copy()
+
+    print(sudoku)
+
+    while wrong_r == 1 or wrong_c==1:
+        sudoku_temp = sudoku_fill(sudoku.copy(), numbers)
+        wrong_r, wrong_c = sudoku_checker(sudoku_temp)
+
+    wrong_r = 1
+    wrong_c = 1
+
+    sudoku = sudoku_temp.copy()
+
+
+    while wrong_r == 1 or wrong_c==1:
+        sudoku_temp = sudoku_fill(sudoku.copy(), numbers)
+        wrong_r, wrong_c = sudoku_checker(sudoku_temp)
+
+    sudoku = sudoku_temp.copy()
+
+
+    print(sudoku)
+
+
+
+def random_square(numbers, size_square = 3): 
+    #This function generates a random 3 by 3 square without repetition
+
+    ttsquare = np.zeros([size_square, size_square], dtype = int)
+
+    ttsquare = rng.choice(numbers,  size=(size_square, size_square),replace=False) 
 
     return ttsquare
 
 
-def sudoku_init(numbers):
-    
-    sudoku = np.zeros([9, 9], dtype=int) #initialize array of full sudoku
+def sudoku_init(numbers, size_square = 3):
+    #This function initializes a sudoku array
 
-    square_d1 = random_square(numbers)
+    sudoku = np.zeros([size_square*size_square, size_square*size_square], dtype=int) #initialize array of full sudoku
 
-    square_d2 = random_square(numbers)
+    small_squares = np.zeros((2, size_square, size_square))
 
-    #square_d3 = random_square(numbers)
-    square_d3 = np.zeros([3,3],dtype=int)
+    for i in range(2):
+        small_squares[i,:,:] = random_square(numbers, size_square) #3D array containing prefilled squares
 
-    sudoku[0:3,0:3] = square_d1
-    sudoku[3:6,3:6] = square_d2
-    sudoku[6:9,6:9] = square_d3
+    pos= {'A': slice(0,3), 'B': slice(3,6), 'C': slice(6,9)} #possible positions of squares in sudoku
+
+    #the following section fills out the sudoku array with the generated squares
+    sudoku[pos['A'], pos['A']] = small_squares[0,:,:]
+    sudoku[pos['B'], pos['B']] = small_squares[1,:,:]
 
     return sudoku
 
 def sudoku_fill(sudoku_temp, numbers):
+    #Iterates over the sudoku to fill out the missing squares to output a potential candidate
 
     new_square = random_square(numbers)
 
@@ -45,12 +101,6 @@ def sudoku_fill(sudoku_temp, numbers):
     elif sudoku[6,3] == 0:
         sudoku_temp[6:9,3:6] = new_square
 
-    #count = 0
-    #for i in sudoku_num:
-    #    for j in i:
-    #        sudoku_num[count][j] = j+1
-    #        count += 1
-        #count = 0
 
     return sudoku_temp
 
@@ -86,49 +136,9 @@ def sudoku_checker(sudoku,size=9): #checks sudoku
             wrong_c = 0
 
     return wrong_r, wrong_c
-#sudoku = num_filler(sudoku)
-
-sudoku = sudoku_init(numbers)
-
-wrong_r = 1
-wrong_c = 1
-
-while wrong_r == 1 or wrong_c==1:
-    sudoku_temp = sudoku_fill(sudoku.copy(), numbers)
-    wrong_r, wrong_c = sudoku_checker(sudoku_temp)
-
-sudoku = sudoku_temp.copy()
-
-wrong_r = 1
-wrong_c = 1
-
-while wrong_r == 1 or wrong_c==1:
-    sudoku_temp = sudoku_fill(sudoku.copy(), numbers)
-    wrong_r, wrong_c = sudoku_checker(sudoku_temp)
-
-wrong_r = 1
-wrong_c = 1
-
-sudoku = sudoku_temp.copy()
-
-print(sudoku)
-
-while wrong_r == 1 or wrong_c==1:
-    sudoku_temp = sudoku_fill(sudoku.copy(), numbers)
-    wrong_r, wrong_c = sudoku_checker(sudoku_temp)
-
-wrong_r = 1
-wrong_c = 1
-
-sudoku = sudoku_temp.copy()
 
 
-while wrong_r == 1 or wrong_c==1:
-    sudoku_temp = sudoku_fill(sudoku.copy(), numbers)
-    wrong_r, wrong_c = sudoku_checker(sudoku_temp)
 
-sudoku = sudoku_temp.copy()
-
-
-print(sudoku)
+if __name__ == "__main__":
+    main()
 

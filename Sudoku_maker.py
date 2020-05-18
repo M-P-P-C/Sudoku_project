@@ -1,59 +1,114 @@
 # packages
 import numpy as np
-# emptysudoku
-sudoku = np.zeros([9,9], dtype=int)
-#variables
-#a = list(range(1,10))
-#seed = np.random.randint(1,10)
 
+#variables
 test_sudoku=np.array([[1,2,3,4,5,6,7,8,9],[4,5,6,7,8,9,1,2,3],[7,8,9,1,2,3,4,5,6],
 [6,7,8,9,1,2,3,4,5],[9,1,2,3,4,5,6,7,8],[3,4,5,6,7,8,9,1,2],
 [2,3,4,5,6,7,8,9,1],[5,6,7,8,9,1,2,3,4],[8,9,1,2,3,4,5,6,7]])
 
-false_sudoku=np.array([[1,2,3,4,5,7,7,8,9],[4,5,6,7,8,9,1,2,3],[7,8,9,1,2,3,4,5,6],
+false_sudoku=np.array([[1,2,3,4,5,7,7,8,9],[4,5,6,7,8,9,1,2,3],[7,7,9,1,2,3,4,5,6],
 [1,2,3,4,5,6,7,8,9],[4,5,6,7,8,9,1,2,3],[7,8,9,1,2,3,4,5,6],
 [1,2,3,4,5,6,7,8,9],[4,5,6,7,8,9,1,2,3],[7,8,9,1,2,3,4,5,6]])
 
 zero_sudoku = np.zeros([9, 9], dtype=int)
 
 #checkers functions
-def sudoku_checker(sudoku,size=9):
+
+#checker 1: lines
+def sudoku_line_checker(sudoku,size=9):
     '''
     sudoku: the inputting sudoku as an array
     size: the amount of digits in a row
     '''
 
-    #checker 1: the lines work
-    for i in range(size):
+    status = False
+    message = "lines don't compute"
+
+    #iterating through the lines of the sudoku
+    for i in range(size):  
         suspect=sudoku[i]
+        #exclude missing inputs
         suspect=suspect[suspect !=0]
+        
+        #check if there are duplicates
         test,data = np.unique(suspect, return_counts=True)
         if True in (data>1):
-            print("lines don't compute")
-            break
-        if i == max(range(size)):
-            print ("lines computed")
+            print(message)
+            return status
 
-    #checker 2: the columns work
+    status = True
+    message = "lines computed"
+    
+    print (message)
+    return status
+
+#checker 2: columns            
+def sudoku_column_checker(sudoku,size=9):
+    '''
+    sudoku: the inputting sudoku as an array
+    size: the amount of digits in a row
+    '''
+
+    status = False
+    message = ("columns don't compute")
+
+    #iterate through columns
     for i in range(size):
         suspect=sudoku[:,i]
+        #exclude missing inputs
         suspect=suspect[suspect !=0]
+        
+        #check if there are duplicates
         test,data = np.unique(suspect, return_counts=True)
         if True in (data>1):
-            print("columns don't compute")
-            break
-        if i == max(range(size)):
-            print ("columns computed")
-
-
-sudoku_checker(test_sudoku)
-sudoku_checker(false_sudoku)
-sudoku_checker(zero_sudoku)
-
+            print(message)
+            return status
+        #if i == max(range(size)):
+            #print ("columns computed")
     
-    
+    status = True
+    message = "columns computed"
+    print(message)
+    return status
 
- 
+#checker 3: squares
+def sudoku_square_checker(sudoku,size=9):
+    '''
+    sudoku: the inputting sudoku as an array
+    size: the amount of digits in a row
+    '''
+
+    status = False
+    message = "squares don't compute"
+    squrt = int((size)**0.5)
+
+    #iterating through the squares
+    for i in range(1,squrt+1):
+        for j in range(1,squrt+1):
+            suspect=sudoku[((j-1)*squrt):(j*squrt),((i-1)*squrt):(i*squrt)]            
+            #exclude missing inputs
+            suspect=suspect[suspect !=0]
+            
+            #check if there are duplicates
+            test,data = np.unique(suspect, return_counts=True)
+            if True in (data>1):
+                print (message)
+                return(status)
+
+    status = True
+    message = "squares computed"
+    print (message)
+    return status
+
+
+
+
+for i in [test_sudoku,false_sudoku,zero_sudoku]:
+    print (i)
+    outcome_lines =sudoku_line_checker(i)
+    outcome_columns = sudoku_column_checker(i)
+    outcome_squares = sudoku_square_checker(i)
+
 
 
     

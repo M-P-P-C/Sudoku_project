@@ -4,16 +4,19 @@ import numpy as np
 from numpy.random import default_rng #used to generate random square without repetition
 import sudoku_checker as sudokucheck
 
-numbers = [1,2,3,4,5,6,7,8,9] #possible numbers in a 3x3 square
 
-size_square = 3
+
 
 rng = default_rng() #setup random number generator
 
 
 def main():
 
-    sudoku = sudoku_init(numbers)
+    size_square = 3
+
+    numbers = np.arange(1, 1+size_square**2) #possible numbers in a NxN square
+
+    sudoku = sudoku_init(numbers, size_square)
 
     #sudoku = num_filler(sudoku)
 
@@ -27,6 +30,10 @@ def main():
     sudoku = sudoku_temp.copy()
 
     print(sudoku)
+
+    import sudoku_visualizer
+
+    sudoku_visualizer.command_line_sud(sudoku)
 
     line = False
     column = False
@@ -85,7 +92,7 @@ def sudoku_init(numbers, size_square = 3):
     #pos= {'A': slice(0,3), 'B': slice(3,6), 'C': slice(6,9)} #possible positions of squares in sudoku
     pos = {}
     for i in range(size_square):
-        pos[i+1] = slice(i*3,(i+1)*3)
+        pos[i+1] = slice(i*size_square,(i+1)*size_square)
 
 
     #the following section fills out the sudoku array with the generated squares

@@ -4,15 +4,12 @@ import numpy as np
 from numpy.random import default_rng #used to generate random square without repetition
 import sudoku_checker as sudokucheck
 
-
-
-
 rng = default_rng() #setup random number generator
 
 
 def main():
 
-    size_square = 3
+    size_square = 4
 
     numbers = np.arange(1, 1+size_square**2) #possible numbers in a NxN square
 
@@ -20,14 +17,19 @@ def main():
 
     #sudoku = num_filler(sudoku)
 
-    line = False
-    column = False
+    squares_to_fill = [(1,2), (2,1), (2,3), (3,2)] #coordinates of squares to be filled with full random squares
 
-    while line == False or column == False:
-        sudoku_temp = sudoku_fill(sudoku.copy(), numbers)
-        line, column = sudokucheck.full_sudoku_check(sudoku_temp)
 
-    sudoku = sudoku_temp.copy()
+    for x, y in squares_to_fill: #This loop fills out desired squares with working sudoku number combinations
+
+        line = False #initialize boolean variables
+        column = False
+
+        while line == False or column == False:
+            sudoku_temp = sudoku_fill(sudoku.copy(), numbers, x, y, size_square)
+            line, column = sudokucheck.full_sudoku_check(sudoku_temp,)
+
+        sudoku = sudoku_temp.copy()
 
     print(sudoku)
 
@@ -35,38 +37,6 @@ def main():
 
     sudoku_visualizer.command_line_sud(sudoku)
 
-    line = False
-    column = False
-
-    while line == False or column == False:
-        sudoku_temp = sudoku_fill(sudoku.copy(), numbers)
-        line, column = sudokucheck.full_sudoku_check(sudoku_temp)
-
-    sudoku = sudoku_temp.copy()
-
-    print(sudoku)
-
-    line = False
-    column = False
-
-    while line == False or column == False:
-        sudoku_temp = sudoku_fill(sudoku.copy(), numbers)
-        line, column = sudokucheck.full_sudoku_check(sudoku_temp)
-
-    sudoku = sudoku_temp.copy()
-
-    print(sudoku)
-
-    line = False
-    column = False
-
-    while line == False or column == False:
-        sudoku_temp = sudoku_fill(sudoku.copy(), numbers)
-        line, column = sudokucheck.full_sudoku_check(sudoku_temp)
-
-    sudoku = sudoku_temp.copy()
-
-    print(sudoku)
 
 
 def random_square(numbers, size_square = 3): 
@@ -106,19 +76,25 @@ def sudoku_init(numbers, size_square = 3):
 
     return sudoku
 
-def sudoku_fill(sudoku_temp, numbers):
+def sudoku_fill(sudoku_temp, numbers,  sq_to_fill_x, sq_to_fill_y,size_square = 3):
     #Iterates over the sudoku to fill out the missing squares to output a potential candidate
 
-    new_square = random_square(numbers)
+    pos = {}
+    for i in range(size_square):
+        pos[i+1] = slice(i*size_square,(i+1)*size_square)
 
-    if sudoku_temp[0,3] == 0:
+    new_square = random_square(numbers, size_square)
+
+    sudoku_temp[pos[sq_to_fill_x], pos[sq_to_fill_y]] = new_square
+
+    '''if sudoku_temp[0,3] == 0:
         sudoku_temp[0:3,3:6] = new_square
     elif sudoku_temp[3,0] == 0:
         sudoku_temp[3:6,0:3] = new_square
     elif sudoku_temp[3,6] == 0:
         sudoku_temp[3:6,6:9] = new_square
     elif sudoku_temp[6,3] == 0:
-        sudoku_temp[6:9,3:6] = new_square
+        sudoku_temp[6:9,3:6] = new_square'''
 
 
     return sudoku_temp

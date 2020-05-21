@@ -3,23 +3,35 @@
 import numpy as np 
 from numpy.random import default_rng #used to generate random square without repetition
 import sudoku_checker as sudokucheck
+import time
+
 
 rng = default_rng() #setup random number generator
 
 
 def main():
 
-    size_square = 4
+    size_square = 3
 
     numbers = np.arange(1, 1+size_square**2) #possible numbers in a NxN square
 
     sudoku = sudoku_init(numbers, size_square)
 
     #sudoku = num_filler(sudoku)
+    start = time.time()
+    timess = []
+    for i in range(1000000):
+        check = berkley_test(sudoku, start, timess)
 
-    squares_to_fill = [(1,2), (2,1), (2,3), (3,2)] #coordinates of squares to be filled with full random squares
+        if check != None:
+            start = time.time()
 
 
+
+
+    squares_to_fill = [(1,2), (2,1), (2,3)] #coordinates of squares to be filled with full random squares
+
+    start = time.time()
     for x, y in squares_to_fill: #This loop fills out desired squares with working sudoku number combinations
 
         line = False #initialize boolean variables
@@ -31,7 +43,10 @@ def main():
 
         sudoku = sudoku_temp.copy()
 
-    print(sudoku)
+    end = time.time()
+    print('Time elapsed to fill sudoku: '+str(end - start)+' seconds \n')
+
+    #print(sudoku)
 
     import sudoku_visualizer
 
@@ -68,7 +83,7 @@ def sudoku_init(numbers, size_square = 3):
     #the following section fills out the sudoku array with the generated squares
     sudoku[pos[1], pos[1]] = small_squares[0,:,:]
     sudoku[pos[2], pos[2]] = small_squares[1,:,:]
-    sudoku[pos[3], pos[3]] = small_squares[2,:,:]
+    #sudoku[pos[3], pos[3]] = small_squares[2,:,:]
 
     #from matplotlib import pyplot as plt
     #plt.imshow(sudoku, interpolation='nearest')
@@ -99,38 +114,57 @@ def sudoku_fill(sudoku_temp, numbers,  sq_to_fill_x, sq_to_fill_y,size_square = 
 
     return sudoku_temp
 
-def sudoku_checker(sudoku,size=9): #checks sudoku
+def berkley_test(sudoku, start, timess):
+    sudoku2 = sudoku.copy()
+    try:
+        rows    = [set(range(1,10)) for i in range(9)] # set of available
+        columns = [set(range(1,10)) for i in range(9)] #   numbers for each
+        squares = [set(range(1,10)) for i in range(9)] #   row, column and square
 
-    wrong_r = 1
-    wrong_c = 1
+        for i in range(9):
+            rows[i].discard(rows[i].difference_update(sudoku[i]))
+            columns[i].discard(columns[i].difference_update(sudoku[:,i]))
+            squares[0+int(i/3)*4].discard(squares[0+int(i/3)*4].difference_update(sudoku[i]))
+            #for j in range(9):
+                #columns[j].discard(columns[j].intersection(sudoku[:, j]))
 
-    #checker 1: the lines work
-    for i in range(size):
-        suspect=sudoku[i]
-        suspect=suspect[suspect !=0]
-        test,data = np.unique(suspect, return_counts=True)
-        if True in (data>1):
-            print("lines don't compute")
-            wrong_r = 1
-            break
-        if i == max(range(size)):
-            print ("lines computed")
-            wrong_r = 0
+        #empt = [[3,4,5,6,7,8],[0,1,2,6,7,8],[0,1,2,3,4,5]]
+        empt = [[3,4,5,6,7,8],[0,1,2,6,7,8],[0,1,2,3,4,5,6,7,8]]
+        #empt = [[3,4,5,6,7,8],[0,1,2,3,4,5,6,7,8],[0,1,2,3,4,5,6,7,8]]
+        #empt = [[0,1,2,3,4,5,6,7,8],[0,1,2,3,4,5,6,7,8],[0,1,2,3,4,5,6,7,8]]
+        cc=0
+        import random
+        for i in range(9):
+            if i ==3 or i==6:
+                #print(sudoku2)
+                cc+=1
+            for j in empt[cc]:
+                # pick a number for cell (i,j) from the set of remaining available numbers
+                
+                    choices = rows[i].intersection(columns[j]).intersection(squares[int(i/3)*3 + int(j/3)])
+                    choice  = random.choice(list(choices))
 
-    #checker 2: the columns work
-    for i in range(size):
-        suspect=sudoku[:,i]
-        suspect=suspect[suspect !=0]
-        test,data = np.unique(suspect, return_counts=True)
-        if True in (data>1):
-            print("columns don't compute")
-            wrong_c = 1
-            break
-        if i == max(range(size)):
-            print ("columns computed")
-            wrong_c = 0
+                    sudoku2[i][j] = choice
 
-    return wrong_r, wrong_c
+                    rows[i].discard(choice)
+                    columns[j].discard(choice)
+                    squares[int(i/3)*3 + int(j/3)].discard(choice)
+                
+
+        # success! every cell is filled.
+
+        end = time.time()
+        print('Time elapsed to fill sudoku: '+str(end - start)+' seconds \n')
+
+        timess.append(end - start)
+        start = time.time()
+
+        return start
+
+    except IndexError:
+                # if there is an IndexError, we have worked ourselves in a corner (we just start over)
+        pass
+
 
 
 
